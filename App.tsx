@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Stats from './components/Stats';
@@ -324,32 +324,67 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
+  // Handle Hash Navigation (for Google Ads Sitelinks)
+  const handleHashNavigation = useCallback(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (['home', 'service', 'about', 'contact', 'eyewear', 'lens'].includes(hash)) {
+      setCurrentPage(hash as PageType);
+    } else if (!hash) {
+      setCurrentPage('home');
+    }
+  }, []);
+
+  useEffect(() => {
+    // Initial load check
+    handleHashNavigation();
+
+    // Listen for hash changes (Back button, manual URL change)
+    window.addEventListener('hashchange', handleHashNavigation);
+    return () => window.removeEventListener('hashchange', handleHashNavigation);
+  }, [handleHashNavigation]);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [currentPage, selectedProduct]);
 
+  const handleNavigate = (page: PageType) => {
+    // Update state
+    setCurrentPage(page);
+    // Update hash so the URL matches (Google Ads compatible)
+    if (page === 'home') {
+      window.location.hash = '';
+      // Remove hash entirely if possible for cleaner home URL
+      if (window.history.pushState) {
+        window.history.pushState('', '/', window.location.pathname);
+      }
+    } else {
+      window.location.hash = page;
+    }
+  };
+
   const handleProductDetail = (product: Product) => {
     setSelectedProduct(product);
     setCurrentPage('eyewear-detail');
+    window.location.hash = 'eyewear-detail';
   };
 
   const renderContent = () => {
     switch (currentPage) {
-      case 'home': return <HomePage onNavigate={setCurrentPage} />;
+      case 'home': return <HomePage onNavigate={handleNavigate} />;
       case 'eyewear': return <EyewearCatalogPage onProductClick={handleProductDetail} />;
-      case 'eyewear-detail': return selectedProduct ? <EyewearDetailPage product={selectedProduct} onBack={() => setCurrentPage('eyewear')} onNavigate={setCurrentPage} /> : <EyewearCatalogPage onProductClick={handleProductDetail} />;
+      case 'eyewear-detail': return selectedProduct ? <EyewearDetailPage product={selectedProduct} onBack={() => handleNavigate('eyewear')} onNavigate={handleNavigate} /> : <EyewearCatalogPage onProductClick={handleProductDetail} />;
       case 'lens': return <div className="animate-in fade-in duration-700"><SubPageHero title="콘택트 렌즈" engTitle="CONTACT LENSES" bgImage={SITE_IMAGES.cards.lens} /><div className="container mx-auto px-6 py-20 text-center"><h3 className="text-3xl font-serif italic mb-8">Professional Contact Lens Care</h3><p className="text-gray-500">아큐브, 바슈롬 등 글로벌 브랜드 렌즈를 만나보세요.</p></div></div>;
-      case 'service': return <div className="pt-20"><Services onSelectCategory={setCurrentPage} /></div>;
+      case 'service': return <div className="pt-20"><Services onSelectCategory={handleNavigate} /></div>;
       case 'about': return <AboutPage />;
       case 'contact':
       case 'contact-info': return <ContactPage />;
-      default: return <HomePage onNavigate={setCurrentPage} />;
+      default: return <HomePage onNavigate={handleNavigate} />;
     }
   };
 
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900">
-      <Navbar onNavigate={setCurrentPage} currentPage={currentPage} />
+      <Navbar onNavigate={handleNavigate} currentPage={currentPage} />
       <main>{renderContent()}</main>
       <Footer />
       <ContactFAB />
