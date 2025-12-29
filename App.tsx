@@ -324,11 +324,81 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  // Handle Hash Navigation (Improved for Google Ads)
+  // SEO: Inject JSON-LD for Local Business
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "OpticalBusiness",
+      "name": "러브안경 (Love Optical)",
+      "image": SITE_IMAGES.aboutInterior,
+      "@id": "https://loveoptical.co.kr",
+      "url": "https://loveoptical.co.kr",
+      "telephone": CONTACT_INFO.phone,
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "남대문로 81 (명동지하상가 바-4호)",
+        "addressLocality": "중구",
+        "addressRegion": "서울특별시",
+        "postalCode": "04533",
+        "addressCountry": "KR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 37.5647,
+        "longitude": 126.9815
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "opens": "11:00",
+        "closes": "19:00"
+      },
+      "sameAs": [
+        "https://naver.me/5W92IMqE",
+        "https://talk.naver.com/profile/wargoq0"
+      ]
+    };
+    script.text = JSON.stringify(jsonLd);
+    document.head.appendChild(script);
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  // SEO: Update Page Metadata dynamically
+  useEffect(() => {
+    const titles: Record<string, string> = {
+      home: '러브안경 | 명동 50년 전통 정밀 검안 안경원',
+      about: '브랜드 스토리 | 러브안경 SINCE 1977',
+      service: '서비스 안내 | 정밀 검안 및 피팅 전문',
+      eyewear: '컬렉션 | 프리미엄 하우스 브랜드 안경',
+      lens: '콘택트 렌즈 | 아큐브, 바슈롬 정품 취급점',
+      contact: '오시는 길 | 명동 지하상가 바-4호 러브안경',
+      'eyewear-detail': `${selectedProduct?.brand || '안경'} - ${selectedProduct?.name || '상세보기'} | 러브안경`
+    };
+
+    const descriptions: Record<string, string> = {
+      home: '1977년부터 명동을 지켜온 러브안경. 2대째 이어오는 정밀 검안 노하우를 만나보세요.',
+      about: '부친의 정직함을 이어받아 2대째 운영 중인 명동 러브안경의 역사와 철학.',
+      service: 'Essilor 최첨단 검안기와 50년 숙련된 노하우로 최상의 시력을 제공합니다.',
+      eyewear: '블랙몬스터, 펠리즈 등 다양한 하우스 브랜드 안경 및 선글라스 컬렉션.',
+      lens: '다양한 글로벌 브랜드 콘택트 렌즈와 전용 솔루션 전문 상담.',
+      contact: '명동 롯데백화점 인근, 명동 지하상가 바-4호 위치 및 상담 안내.'
+    };
+
+    document.title = titles[currentPage] || titles.home;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', descriptions[currentPage] || descriptions.home);
+    }
+  }, [currentPage, selectedProduct]);
+
+  // Handle Hash Navigation
   const handleHashNavigation = useCallback(() => {
-    // 해시에서 # 제거 및 ? 이후의 파라미터(GCLID 등) 제거
     const fullHash = window.location.hash.replace('#', '');
-    const hash = fullHash.split('?')[0] as PageType; // 'about?gclid=...' 에서 'about'만 추출
+    const hash = fullHash.split('?')[0] as PageType;
 
     if (['home', 'service', 'about', 'contact', 'eyewear', 'lens'].includes(hash)) {
       setCurrentPage(hash);
