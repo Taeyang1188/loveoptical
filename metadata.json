@@ -1,0 +1,7 @@
+{
+  "name": "Love Optical (러브안경) - 50 Years of Excellence",
+  "description": "Premium optical service in the heart of Myeongdong, Seoul. Specializing in expert eye examinations, frame adjustments, and quick lens replacement since 1977.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
