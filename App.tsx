@@ -324,21 +324,21 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  // Handle Hash Navigation (for Google Ads Sitelinks)
+  // Handle Hash Navigation (Improved for Google Ads)
   const handleHashNavigation = useCallback(() => {
-    const hash = window.location.hash.replace('#', '');
+    // 해시에서 # 제거 및 ? 이후의 파라미터(GCLID 등) 제거
+    const fullHash = window.location.hash.replace('#', '');
+    const hash = fullHash.split('?')[0] as PageType; // 'about?gclid=...' 에서 'about'만 추출
+
     if (['home', 'service', 'about', 'contact', 'eyewear', 'lens'].includes(hash)) {
-      setCurrentPage(hash as PageType);
+      setCurrentPage(hash);
     } else if (!hash) {
       setCurrentPage('home');
     }
   }, []);
 
   useEffect(() => {
-    // Initial load check
     handleHashNavigation();
-
-    // Listen for hash changes (Back button, manual URL change)
     window.addEventListener('hashchange', handleHashNavigation);
     return () => window.removeEventListener('hashchange', handleHashNavigation);
   }, [handleHashNavigation]);
@@ -348,12 +348,9 @@ const App = () => {
   }, [currentPage, selectedProduct]);
 
   const handleNavigate = (page: PageType) => {
-    // Update state
     setCurrentPage(page);
-    // Update hash so the URL matches (Google Ads compatible)
     if (page === 'home') {
       window.location.hash = '';
-      // Remove hash entirely if possible for cleaner home URL
       if (window.history.pushState) {
         window.history.pushState('', '/', window.location.pathname);
       }
