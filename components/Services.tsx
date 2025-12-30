@@ -61,7 +61,7 @@ const Services: React.FC<ServicesProps> = ({ onSelectCategory }) => {
           <div className="w-16 h-1 bg-[#A53837] mx-auto"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <ServiceCard 
             title="안경 & 선글라스" 
             subtitle="Eyewear Collection"
@@ -83,45 +83,6 @@ const Services: React.FC<ServicesProps> = ({ onSelectCategory }) => {
             description="최첨단 Essilor AKR 700 검안기를 통한 50년 숙련된 노하우로 정밀 검안 서비스를 제공합니다."
             onClick={() => onSelectCategory?.('contact')}
           />
-        </div>
-
-        {/* Price Table Section */}
-        <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="bg-[#1a1a1a] p-6 text-white text-center">
-            <h4 className="font-serif text-xl">Service Price Guide</h4>
-            <p className="text-[10px] tracking-widest text-white/50 uppercase mt-1">합리적이고 투명한 가격 정책</p>
-          </div>
-          <div className="p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-              <div className="space-y-4">
-                <div className="flex justify-between items-end border-b border-gray-100 pb-2">
-                  <span className="text-gray-900 font-bold">안경테 (Frame)</span>
-                  <span className="text-[#A53837] font-serif">20,000 ~ 200,000원</span>
-                </div>
-                <div className="flex justify-between items-end border-b border-gray-100 pb-2">
-                  <span className="text-gray-900 font-bold">안경 렌즈 (Lens)</span>
-                  <span className="text-[#A53837] font-serif">20,000 ~ 100,000원</span>
-                </div>
-                <div className="flex justify-between items-end border-b border-gray-100 pb-2">
-                  <span className="text-gray-900 font-bold">선글라스 (Sunglasses)</span>
-                  <span className="text-[#A53837] font-serif">30,000 ~ 160,000원</span>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <div className="flex justify-between items-end border-b border-gray-100 pb-2">
-                  <span className="text-gray-900 font-bold">렌즈 교체 (Lens Only)</span>
-                  <span className="text-[#A53837] font-serif">30,000원 ~</span>
-                </div>
-                <div className="flex justify-between items-end border-b border-gray-100 pb-2">
-                  <span className="text-gray-900 font-bold">무료 피팅 (Custom Fitting)</span>
-                  <span className="text-green-600 font-bold">FREE</span>
-                </div>
-                <p className="text-[11px] text-gray-400 italic mt-2">
-                  * 제품 사양 및 도수에 따라 가격이 상이할 수 있습니다. 피팅 서비스는 구매 고객에 한해 무료로 제공됩니다.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
