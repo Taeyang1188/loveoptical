@@ -34,7 +34,8 @@ const SubPageHero = ({ title, engTitle, bgImage }: { title: string, engTitle: st
 const HomePage = ({ onNavigate }: { onNavigate: (page: any) => void }) => (
   <div className="animate-in fade-in duration-700">
     <Hero onNavigate={onNavigate} />
-    <stats />
+    {/* Fix: Capitalize Stats component to avoid JSX IntrinsicElements error */}
+    <Stats />
     <section className="bg-[#A53837] py-16">
       <div className="container mx-auto px-6 text-center">
         <h2 className="text-3xl md:text-4xl font-serif text-white mb-6">
