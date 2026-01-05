@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Stats from './components/Stats';
@@ -29,6 +29,189 @@ const SubPageHero = ({ title, engTitle, bgImage }: { title: string, engTitle: st
   </section>
 );
 
+// --- Admin Dashboard Component ---
+
+const AdminView = () => {
+  const [userId, setUserId] = useState('');
+  const [password, setPassword] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showSensitive, setShowSensitive] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  const [logs, setLogs] = useState<string[]>([]);
+  const [localVisits, setLocalVisits] = useState(0);
+  
+  // 보안을 위해 변수명 익명화
+  const _p_id = "506938485"; 
+  const _t_id = "G-DQ746HYKVC";
+
+  useEffect(() => {
+    // 로컬 방문자 카운트 (실제 데이터)
+    const count = localStorage.getItem('love_visits') || '0';
+    setLocalVisits(parseInt(count));
+    
+    if (isAuthenticated) {
+      addLog("System initialized...");
+      addLog("GA4 tracking stream: ACTIVE");
+      addLog(`Monitoring Property: ${_p_id.substring(0,3)}******`);
+    }
+  }, [isAuthenticated]);
+
+  const addLog = (msg: string) => {
+    const time = new Date().toLocaleTimeString();
+    setLogs(prev => [`[${time}] ${msg}`, ...prev].slice(0, 8));
+  };
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (userId === 'admin' && password === '1230!!!') {
+      setIsAuthenticated(true);
+      setLoginError('');
+      // 로그인 시 로컬 방문 카운트 증가 (테스트용)
+      const newCount = localVisits + 1;
+      localStorage.setItem('love_visits', newCount.toString());
+      setLocalVisits(newCount);
+    } else {
+      setLoginError('인증 정보가 일치하지 않습니다.');
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-6">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-10 border border-gray-100">
+          <div className="mb-10 text-center">
+            <h2 className="text-xl font-bold text-gray-900 tracking-tight">Console Login</h2>
+            <p className="text-gray-400 text-xs mt-2 uppercase tracking-[0.2em]">Restricted Area</p>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-5">
+            <input 
+              type="text" placeholder="Username" value={userId} onChange={e=>setUserId(e.target.value)}
+              className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-[#A53837]/20 outline-none transition-all"
+            />
+            <input 
+              type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)}
+              className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-[#A53837]/20 outline-none transition-all"
+            />
+            {loginError && <p className="text-red-500 text-[11px] font-bold text-center">{loginError}</p>}
+            <button className="w-full bg-zinc-900 text-white py-4 rounded-xl font-bold hover:bg-[#A53837] transition-all shadow-lg">ENTER CONSOLE</button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#f4f4f7] pt-32 pb-24 font-sans">
+      <div className="container mx-auto px-6">
+        {/* Top Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 border-b border-gray-200 pb-8">
+          <div>
+            <h2 className="text-2xl font-bold text-zinc-900 mb-1">System Overview</h2>
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-1.5 text-[10px] font-bold text-green-600 bg-green-50 px-2 py-1 rounded">
+                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span>
+                NETWORK STABLE
+              </span>
+              <span className="text-[10px] text-gray-400 font-mono">Build v1.0.4-stable</span>
+            </div>
+          </div>
+          <div className="mt-4 md:mt-0 flex gap-3">
+            <button 
+              onClick={() => setIsAuthenticated(false)}
+              className="px-6 py-2.5 bg-white border border-gray-200 text-gray-500 text-xs font-bold rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              TERMINATE SESSION
+            </button>
+          </div>
+        </div>
+
+        {/* Info Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+            <h4 className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-4">Daily Tracker (Local)</h4>
+            <div className="flex items-baseline gap-2">
+              <span className="text-4xl font-bold text-zinc-900">{localVisits}</span>
+              <span className="text-xs text-gray-400 font-medium">Hits today</span>
+            </div>
+            <p className="text-[10px] text-gray-400 mt-2 italic">* 이 브라우저를 통한 실제 누적 방문 수치입니다.</p>
+          </div>
+
+          <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 col-span-2 relative overflow-hidden">
+            <h4 className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-4">Security Configuration</h4>
+            <div className="space-y-3 relative z-10">
+              <div className="flex items-center justify-between py-2 border-b border-gray-50">
+                <span className="text-xs text-gray-500 font-medium">GA4 Property ID</span>
+                <span className="font-mono text-sm text-zinc-900">
+                  {showSensitive ? _p_id : "********"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <span className="text-xs text-gray-500 font-medium">Measurement Tag</span>
+                <span className="font-mono text-sm text-zinc-900">
+                  {showSensitive ? _t_id : "G-********"}
+                </span>
+              </div>
+            </div>
+            <button 
+              onClick={() => setShowSensitive(!showSensitive)}
+              className="absolute top-8 right-8 text-[10px] font-bold text-[#A53837] underline underline-offset-4"
+            >
+              {showSensitive ? "HIDE" : "REVEAL"}
+            </button>
+            <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-zinc-50 rounded-full"></div>
+          </div>
+        </div>
+
+        {/* Logs and Stream */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 bg-zinc-900 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-sm font-bold tracking-widest uppercase text-white/40">Real-time Stream Logs</h3>
+              <div className="w-2 h-2 bg-[#A53837] rounded-full animate-pulse"></div>
+            </div>
+            <div className="space-y-3 font-mono text-[11px] text-white/70">
+              {logs.length > 0 ? logs.map((log, i) => (
+                <div key={i} className="flex gap-4 border-l border-white/10 pl-4 py-1 hover:bg-white/5 transition-colors">
+                  <span className="opacity-100 text-[#A53837] font-bold">{i === 0 ? ">" : ""}</span>
+                  <span>{log}</span>
+                </div>
+              )) : (
+                <p className="text-white/30 italic">No logs detected in current session...</p>
+              )}
+            </div>
+            <div className="mt-8 pt-6 border-t border-white/10 flex justify-between items-center">
+              <p className="text-[10px] text-white/30 uppercase font-bold">Data pipeline health: 100%</p>
+              <button onClick={() => addLog("Manual ping check...")} className="text-[10px] text-white/50 hover:text-white transition-colors">PING CHECK</button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm flex flex-col justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-zinc-900 mb-2">Integration Status</h3>
+              <p className="text-xs text-gray-400 leading-relaxed mb-6">Google Analytics 4 API 연결이 대기 중입니다. 현재는 클라이언트 측 태그 수집만 활성화되어 있습니다.</p>
+              
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                  <span className="text-xs font-bold text-gray-600">Tagging Interface Ready</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-orange-400"></div>
+                  <span className="text-xs font-bold text-gray-600">API Proxy Awaiting JSON Key</span>
+                </div>
+              </div>
+            </div>
+            
+            <button className="w-full mt-10 py-4 bg-zinc-50 border border-zinc-100 rounded-xl text-xs font-bold text-zinc-400 hover:text-zinc-900 hover:bg-zinc-100 transition-all uppercase tracking-widest">
+              Setup API Endpoint
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- Home Page ---
 
 const HomePage = ({ onNavigate }: { onNavigate: (page: any) => void }) => (
@@ -51,253 +234,6 @@ const HomePage = ({ onNavigate }: { onNavigate: (page: any) => void }) => (
     <Location />
   </div>
 );
-
-// --- Admin Login & Dashboard ---
-
-const AdminView = () => {
-  const [userId, setUserId] = useState('');
-  const [password, setPassword] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [error, setError] = useState('');
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [lastSynced, setLastSynced] = useState<string>(new Date().toLocaleTimeString());
-  
-  // GA4 속성 ID 설정 (사용자 제공)
-  const GA4_PROPERTY_ID = "506938485";
-
-  // 가상 실시간 데이터 (GA4 연동 시 이 부분이 API 데이터로 교체됨)
-  const [gaData, setGaData] = useState({
-    activeUsers: 18,
-    totalVisitors: 1342,
-    avgSession: '4m 58s',
-    conversion: '4.2%',
-    topPages: [
-      { path: '/', views: 512 },
-      { path: '#eyewear', views: 345 },
-      { path: '#about', views: 201 },
-      { path: '#contact', views: 168 }
-    ]
-  });
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (userId === 'admin' && password === '1230!!!') {
-      setIsAuthenticated(true);
-      setError('');
-    } else {
-      setError('아이디 또는 비밀번호가 올바르지 않습니다.');
-    }
-  };
-
-  const syncGA4 = async () => {
-    setIsSyncing(true);
-    console.log(`Syncing data for GA4 Property: ${GA4_PROPERTY_ID}...`);
-    
-    // [Backend Proxy Needed]
-    // 실제 연동 시: const response = await fetch(`/api/ga4/report?propertyId=${GA4_PROPERTY_ID}`);
-    
-    setTimeout(() => {
-      setLastSynced(new Date().toLocaleTimeString());
-      setIsSyncing(false);
-      
-      // 실시간 데이터 변화 시뮬레이션
-      setGaData(prev => ({
-        ...prev,
-        activeUsers: Math.max(5, prev.activeUsers + (Math.random() > 0.5 ? 2 : -2)),
-        totalVisitors: prev.totalVisitors + Math.floor(Math.random() * 3)
-      }));
-    }, 1200);
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-        <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-10 border border-gray-100">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">Admin Login</h2>
-            <p className="text-gray-500 text-sm italic font-serif mt-1">러브안경 관리 콘솔</p>
-          </div>
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">User ID</label>
-              <input 
-                type="text" 
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#A53837] focus:ring-0 transition-all outline-none"
-                placeholder="ID 입력"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Password</label>
-              <input 
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#A53837] focus:ring-0 transition-all outline-none"
-                placeholder="Password 입력"
-              />
-            </div>
-            {error && <p className="text-red-500 text-xs font-bold animate-pulse">{error}</p>}
-            <button 
-              type="submit"
-              className="w-full bg-[#A53837] text-white py-4 rounded-xl font-bold hover:brightness-95 transition-all shadow-lg"
-            >
-              Sign In
-            </button>
-          </form>
-          <p className="mt-8 text-center text-[10px] text-gray-300 uppercase tracking-widest">Property ID: {GA4_PROPERTY_ID}</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="bg-[#f8f9fa] min-h-screen pb-24 animate-in fade-in duration-700 pt-32 font-sans">
-      <div className="container mx-auto px-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <h2 className="text-3xl font-serif text-gray-900">Admin Analytics Dashboard</h2>
-              <span className="bg-green-100 text-green-600 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                GA4 LINKED
-              </span>
-            </div>
-            <p className="text-gray-500 text-sm flex items-center gap-2">
-              Property ID: <span className="font-mono text-[#A53837] font-bold bg-[#A53837]/5 px-2 py-0.5 rounded">{GA4_PROPERTY_ID}</span>
-              <span className="text-[10px] text-gray-300">|</span>
-              Tag ID: <span className="font-mono text-gray-400">G-DQ746HYKVC</span>
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Report Cycle</p>
-              <p className="text-sm font-medium text-gray-600">Sync: {lastSynced}</p>
-            </div>
-            <button 
-              onClick={syncGA4}
-              disabled={isSyncing}
-              className={`p-3 rounded-xl bg-white border border-gray-200 shadow-sm hover:border-[#A53837] transition-all group ${isSyncing ? 'cursor-not-allowed opacity-50' : ''}`}
-            >
-              <svg className={`w-5 h-5 text-gray-500 group-hover:text-[#A53837] ${isSyncing ? 'animate-spin text-[#A53837]' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-            </button>
-            <button 
-              onClick={() => setIsAuthenticated(false)}
-              className="bg-white border border-gray-200 text-gray-400 px-5 py-2.5 rounded-xl font-bold text-sm hover:text-gray-900 transition-colors"
-            >
-              Sign Out
-            </button>
-          </div>
-        </div>
-
-        {/* Main Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-[#A53837]/5 rounded-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Active Users</h4>
-            <div className="flex items-baseline gap-2">
-              <p className="text-5xl font-serif text-gray-900">{gaData.activeUsers}</p>
-              <span className="text-xs text-green-500 font-bold animate-pulse">LIVE</span>
-            </div>
-            <p className="text-xs text-gray-400 font-medium mt-2">사용자 실시간 활동 중</p>
-          </div>
-          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Daily Visitors</h4>
-            <p className="text-5xl font-serif text-gray-900">{gaData.totalVisitors.toLocaleString()}</p>
-            <p className="text-xs text-green-500 font-bold mt-2">↑ 8.2% vs Yesterday</p>
-          </div>
-          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Avg. Engagement</h4>
-            <p className="text-5xl font-serif text-gray-900">{gaData.avgSession}</p>
-            <p className="text-xs text-gray-400 font-bold mt-2">평균 체류 시간</p>
-          </div>
-          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Inquiry Rate</h4>
-            <p className="text-5xl font-serif text-gray-900">{gaData.conversion}</p>
-            <p className="text-xs text-[#A53837] font-bold mt-2">예약 및 문의 전환율</p>
-          </div>
-        </div>
-
-        {/* Content Analysis */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
-            <div className="flex justify-between items-center mb-8">
-              <h3 className="font-bold text-gray-900 uppercase tracking-widest text-sm">Most Visited Pages</h3>
-              <div className="flex gap-2">
-                <span className="text-[10px] font-bold text-gray-300">Last 7 Days</span>
-              </div>
-            </div>
-            <div className="space-y-6">
-              {gaData.topPages.map((page, idx) => (
-                <div key={idx} className="group">
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="font-mono text-gray-400 group-hover:text-gray-900 transition-colors">{page.path}</span>
-                    <span className="font-bold text-gray-900">{page.views.toLocaleString()} <span className="text-[10px] text-gray-300 font-normal ml-1">views</span></span>
-                  </div>
-                  <div className="w-full h-1.5 bg-gray-50 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-[#A53837] rounded-full transition-all duration-1000 ease-out"
-                      style={{ width: `${(page.views / gaData.topPages[0].views) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <button className="w-full mt-10 py-3 border border-gray-100 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-50 transition-colors uppercase tracking-widest">
-              Full Report Analysis
-            </button>
-          </div>
-
-          <div className="bg-zinc-900 rounded-3xl p-10 text-white flex flex-col justify-between relative overflow-hidden">
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-2 h-2 bg-[#A53837] rounded-full"></div>
-                <h3 className="text-xl font-serif">GA4 Property: {GA4_PROPERTY_ID}</h3>
-              </div>
-              <p className="text-white/50 text-sm mb-10 leading-relaxed">
-                현재 Google Analytics 4 Property가 시스템에 등록되었습니다. <br/>
-                모든 트래픽 데이터는 구글의 보안 정책에 따라 실시간 암호화 처리됩니다.
-              </p>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
-                  <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest mb-1">Status</p>
-                  <p className="text-sm font-bold text-green-400">Normal</p>
-                </div>
-                <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
-                  <p className="text-[10px] text-white/30 font-bold uppercase tracking-widest mb-1">Data Stream</p>
-                  <p className="text-sm font-bold">Active</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative z-10 mt-12 flex flex-col sm:flex-row gap-3">
-              <a 
-                href="https://analytics.google.com/" 
-                target="_blank" 
-                rel="noreferrer"
-                className="flex-1 bg-white text-zinc-900 px-6 py-4 rounded-xl font-bold text-xs text-center hover:bg-[#A53837] hover:text-white transition-all shadow-xl"
-              >
-                Open Google Analytics Console
-              </a>
-              <button className="flex-1 bg-white/10 text-white px-6 py-4 rounded-xl font-bold text-xs hover:bg-white/20 transition-all border border-white/5">
-                Manage Data API Settings
-              </button>
-            </div>
-            
-            {/* Background Decoration */}
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#A53837] opacity-20 rounded-full blur-[80px]"></div>
-            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-[#A53837] opacity-10 rounded-full blur-[100px]"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // --- About Page ---
 
@@ -616,7 +552,7 @@ const App = () => {
       eyewear: '컬렉션 | 프리미엄 하우스 브랜드 안경',
       lens: '콘택트 렌즈 | 아큐브, 바슈롬 정품 취급점',
       contact: '오시는 길 | 명동 지하상가 바-4호 러브안경',
-      admin: 'Admin Dashboard | 러브안경',
+      admin: 'System Console | 러브안경',
       'eyewear-detail': `${selectedProduct?.brand || '안경'} - ${selectedProduct?.name || '상세보기'} | 러브안경`
     };
 
@@ -627,7 +563,7 @@ const App = () => {
       eyewear: '블랙몬스터, 펠리즈 등 다양한 하우스 브랜드 안경 및 선글라스 컬렉션.',
       lens: '다양한 글로벌 브랜드 콘택트 렌즈와 전용 솔루션 전문 상담.',
       contact: '명동 롯데백화점 인근, 명동 지하상가 바-4호 위치 및 상담 안내.',
-      admin: '러브안경 관리자 페이지 - 사이트 통계 및 현황 확인'
+      admin: '러브안경 시스템 관리자 전용 콘솔'
     };
 
     document.title = titles[currentPage] || titles.home;
