@@ -34,7 +34,6 @@ const SubPageHero = ({ title, engTitle, bgImage }: { title: string, engTitle: st
 const HomePage = ({ onNavigate }: { onNavigate: (page: any) => void }) => (
   <div className="animate-in fade-in duration-700">
     <Hero onNavigate={onNavigate} />
-    {/* Fix: Capitalize Stats component to avoid JSX IntrinsicElements error */}
     <Stats />
     <section className="bg-[#A53837] py-16">
       <div className="container mx-auto px-6 text-center">
@@ -63,11 +62,12 @@ const AdminView = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    // 요청하신 ID: admin, Password: 1230!!! 로직 적용
     if (userId === 'admin' && password === '1230!!!') {
       setIsAuthenticated(true);
       setError('');
     } else {
-      setError('Invalid credentials. Please try again.');
+      setError('아이디 또는 비밀번호가 올바르지 않습니다.');
     }
   };
 
@@ -77,7 +77,7 @@ const AdminView = () => {
         <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-10 border border-gray-100">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-gray-900">Admin Login</h2>
-            <p className="text-gray-500 text-sm">Please sign in to access analytics</p>
+            <p className="text-gray-500 text-sm italic font-serif mt-1">Management Console</p>
           </div>
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
@@ -87,7 +87,7 @@ const AdminView = () => {
                 value={userId}
                 onChange={(e) => setUserId(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#A53837] focus:ring-0 transition-all outline-none"
-                placeholder="admin"
+                placeholder="ID 입력"
               />
             </div>
             <div>
@@ -97,10 +97,10 @@ const AdminView = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#A53837] focus:ring-0 transition-all outline-none"
-                placeholder="••••••••"
+                placeholder="Password 입력"
               />
             </div>
-            {error && <p className="text-red-500 text-xs font-bold">{error}</p>}
+            {error && <p className="text-red-500 text-xs font-bold animate-pulse">{error}</p>}
             <button 
               type="submit"
               className="w-full bg-[#A53837] text-white py-4 rounded-xl font-bold hover:brightness-95 transition-all shadow-lg"
@@ -119,7 +119,7 @@ const AdminView = () => {
         <div className="flex justify-between items-center mb-12">
           <div>
             <h2 className="text-3xl font-serif text-gray-900">Dashboard</h2>
-            <p className="text-gray-500">Real-time site analytics & performance</p>
+            <p className="text-gray-500">Real-time site analytics & performance (Simulation Mode)</p>
           </div>
           <button 
             onClick={() => setIsAuthenticated(false)}
@@ -159,10 +159,16 @@ const AdminView = () => {
           </svg>
           <h3 className="text-xl font-bold text-gray-900 mb-2">Google Analytics Integration</h3>
           <p className="text-gray-500 max-w-lg mx-auto mb-6 italic">
-            "Google Analytics tracking is active. Real-time events are being pushed to the GA4 console."
+            "실제 데이터를 확인하시려면 GA4 관리자 콘솔을 연결해주세요."
           </p>
           <div className="flex justify-center gap-4">
-            <button className="bg-zinc-900 text-white px-8 py-3 rounded-xl font-bold text-sm">Open GA4 Console</button>
+            <a 
+              href="https://analytics.google.com/" 
+              target="_blank" 
+              className="bg-zinc-900 text-white px-8 py-3 rounded-xl font-bold text-sm"
+            >
+              Open GA4 Console
+            </a>
             <button className="bg-white border border-gray-200 text-gray-900 px-8 py-3 rounded-xl font-bold text-sm">Download Report</button>
           </div>
         </div>
@@ -181,10 +187,8 @@ const AboutPage = () => (
       bgImage={SITE_IMAGES.aboutHero || SITE_IMAGES.story} 
     />
     
-    {/* Story Component (Heritage & Master) */}
     <Story />
 
-    {/* Our Space Section */}
     <section className="py-24 bg-[#fbf4f3] border-t border-gray-100">
       <div className="container mx-auto px-6">
         <div className="flex flex-col lg:flex-row items-center gap-16">
@@ -395,7 +399,6 @@ const ContactPage = () => (
             </div>
           </div>
 
-          {/* Consultation Buttons (Bilingual Updated) */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <a 
               href={CONTACT_INFO.naverTalk} 
@@ -413,7 +416,6 @@ const ContactPage = () => (
             </a>
           </div>
 
-          {/* Business Hours Section (Bilingual Updated) */}
           <div className="pt-10 border-t border-gray-50">
             <h4 className="text-gray-400 text-xs uppercase tracking-widest mb-4">Business Hours / 영업 시간</h4>
             <div className="space-y-2">
@@ -430,7 +432,6 @@ const ContactPage = () => (
         </div>
       </div>
       
-      {/* Location Section */}
       <Location />
     </div>
   </div>
@@ -443,7 +444,6 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  // SEO: Inject JSON-LD for Local Business
   useEffect(() => {
     const script = document.createElement('script');
     script.type = 'application/ld+json';
@@ -486,7 +486,6 @@ const App = () => {
     };
   }, []);
 
-  // SEO: Update Page Metadata dynamically
   useEffect(() => {
     const titles: Record<string, string> = {
       home: '러브안경 | 명동 50년 전통 정밀 검안 안경원',
@@ -506,7 +505,7 @@ const App = () => {
       eyewear: '블랙몬스터, 펠리즈 등 다양한 하우스 브랜드 안경 및 선글라스 컬렉션.',
       lens: '다양한 글로벌 브랜드 콘택트 렌즈와 전용 솔루션 전문 상담.',
       contact: '명동 롯데백화점 인근, 명동 지하상가 바-4호 위치 및 상담 안내.',
-      admin: 'Love Optical internal analytics dashboard.'
+      admin: '러브안경 관리자 페이지 - 사이트 통계 및 현황 확인'
     };
 
     document.title = titles[currentPage] || titles.home;
@@ -516,7 +515,6 @@ const App = () => {
     }
   }, [currentPage, selectedProduct]);
 
-  // Handle Hash Navigation
   const handleHashNavigation = useCallback(() => {
     const fullHash = window.location.hash.replace('#', '');
     const hash = fullHash.split('?')[0] as PageType;
