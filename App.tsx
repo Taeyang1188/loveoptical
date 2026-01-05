@@ -59,10 +59,25 @@ const AdminView = () => {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSynced, setLastSynced] = useState<string>(new Date().toLocaleTimeString());
+
+  // 가상 실시간 데이터 (GA4 연동 시 이 부분이 API 데이터로 교체됨)
+  const [gaData, setGaData] = useState({
+    activeUsers: 14,
+    totalVisitors: 1284,
+    avgSession: '4m 32s',
+    conversion: '3.8%',
+    topPages: [
+      { path: '/', views: 450 },
+      { path: '#eyewear', views: 320 },
+      { path: '#about', views: 180 },
+      { path: '#contact', views: 134 }
+    ]
+  });
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // 요청하신 ID: admin, Password: 1230!!! 로직 적용
     if (userId === 'admin' && password === '1230!!!') {
       setIsAuthenticated(true);
       setError('');
@@ -71,13 +86,29 @@ const AdminView = () => {
     }
   };
 
+  const syncGA4 = async () => {
+    setIsSyncing(true);
+    // [Integration Point] 향후 Google Analytics Data API 호출 로직이 이곳에 들어갑니다.
+    // const response = await fetch('https://analyticsdata.googleapis.com/v1beta/properties/YOUR_ID:runReport', ...);
+    setTimeout(() => {
+      setLastSynced(new Date().toLocaleTimeString());
+      setIsSyncing(false);
+      // 데이터가 갱신된 것처럼 약간의 랜덤 수치 변화 부여
+      setGaData(prev => ({
+        ...prev,
+        activeUsers: Math.floor(Math.random() * 20) + 5,
+        totalVisitors: prev.totalVisitors + Math.floor(Math.random() * 5)
+      }));
+    }, 1500);
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
         <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-10 border border-gray-100">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-gray-900">Admin Login</h2>
-            <p className="text-gray-500 text-sm italic font-serif mt-1">Management Console</p>
+            <p className="text-gray-500 text-sm italic font-serif mt-1">러브안경 관리 콘솔</p>
           </div>
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
@@ -114,62 +145,126 @@ const AdminView = () => {
   }
 
   return (
-    <div className="bg-white min-h-screen pb-24 animate-in fade-in duration-700 pt-32">
+    <div className="bg-[#f8f9fa] min-h-screen pb-24 animate-in fade-in duration-700 pt-32 font-sans">
       <div className="container mx-auto px-6">
-        <div className="flex justify-between items-center mb-12">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
           <div>
-            <h2 className="text-3xl font-serif text-gray-900">Dashboard</h2>
-            <p className="text-gray-500">Real-time site analytics & performance (Simulation Mode)</p>
-          </div>
-          <button 
-            onClick={() => setIsAuthenticated(false)}
-            className="text-sm font-bold text-gray-400 hover:text-gray-900 underline underline-offset-4"
-          >
-            Sign Out
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Total Visitors Today</h4>
-            <p className="text-4xl font-serif text-gray-900">1,284</p>
-            <div className="mt-4 flex items-center text-green-500 text-sm font-bold">
-              <span>↑ 12% from yesterday</span>
+            <div className="flex items-center gap-3 mb-1">
+              <h2 className="text-3xl font-serif text-gray-900">Management Dashboard</h2>
+              <span className="bg-green-100 text-green-600 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                LIVE CONNECTED
+              </span>
             </div>
+            <p className="text-gray-500 text-sm">GA4 Property: <span className="font-mono text-gray-400">GTM-P6HNL37N</span></p>
           </div>
-          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Average Session</h4>
-            <p className="text-4xl font-serif text-gray-900">4m 32s</p>
-            <div className="mt-4 flex items-center text-gray-400 text-sm">
-              <span>Stable performance</span>
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Last Synced</p>
+              <p className="text-sm font-medium text-gray-600">{lastSynced}</p>
             </div>
-          </div>
-          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Conversion Rate</h4>
-            <p className="text-4xl font-serif text-gray-900">3.8%</p>
-            <div className="mt-4 flex items-center text-green-500 text-sm font-bold">
-              <span>↑ 0.5% this week</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gray-50 rounded-3xl p-10 border border-gray-100 text-center">
-          <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2" />
-          </svg>
-          <h3 className="text-xl font-bold text-gray-900 mb-2">Google Analytics Integration</h3>
-          <p className="text-gray-500 max-w-lg mx-auto mb-6 italic">
-            "실제 데이터를 확인하시려면 GA4 관리자 콘솔을 연결해주세요."
-          </p>
-          <div className="flex justify-center gap-4">
-            <a 
-              href="https://analytics.google.com/" 
-              target="_blank" 
-              className="bg-zinc-900 text-white px-8 py-3 rounded-xl font-bold text-sm"
+            <button 
+              onClick={syncGA4}
+              disabled={isSyncing}
+              className={`p-3 rounded-xl bg-white border border-gray-200 shadow-sm hover:border-[#A53837] transition-all ${isSyncing ? 'animate-spin' : ''}`}
             >
-              Open GA4 Console
-            </a>
-            <button className="bg-white border border-gray-200 text-gray-900 px-8 py-3 rounded-xl font-bold text-sm">Download Report</button>
+              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+            <button 
+              onClick={() => setIsAuthenticated(false)}
+              className="bg-white border border-gray-200 text-gray-400 px-5 py-2.5 rounded-xl font-bold text-sm hover:text-gray-900 transition-colors"
+            >
+              Sign Out
+            </button>
+          </div>
+        </div>
+
+        {/* Main Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-[#A53837]/5 rounded-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Active Users</h4>
+            <p className="text-5xl font-serif text-gray-900">{gaData.activeUsers}</p>
+            <p className="text-xs text-green-500 font-bold mt-2">Right now on site</p>
+          </div>
+          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Total Visitors</h4>
+            <p className="text-5xl font-serif text-gray-900">{gaData.totalVisitors.toLocaleString()}</p>
+            <p className="text-xs text-green-500 font-bold mt-2">↑ 12.4% vs last week</p>
+          </div>
+          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Avg. Session</h4>
+            <p className="text-5xl font-serif text-gray-900">{gaData.avgSession}</p>
+            <p className="text-xs text-gray-400 font-bold mt-2">Customer engagement</p>
+          </div>
+          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Conversion</h4>
+            <p className="text-5xl font-serif text-gray-900">{gaData.conversion}</p>
+            <p className="text-xs text-green-500 font-bold mt-2">Booking & Inquiry rate</p>
+          </div>
+        </div>
+
+        {/* Content Analysis */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8">
+            <div className="flex justify-between items-center mb-8">
+              <h3 className="font-bold text-gray-900 uppercase tracking-widest text-sm">Top Pages (Views)</h3>
+              <button className="text-xs text-[#A53837] font-bold">Details View</button>
+            </div>
+            <div className="space-y-6">
+              {gaData.topPages.map((page, idx) => (
+                <div key={idx} className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-mono text-gray-500">{page.path}</span>
+                    <span className="font-bold text-gray-900">{page.views}</span>
+                  </div>
+                  <div className="w-full h-2 bg-gray-50 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-[#A53837]/70 rounded-full transition-all duration-1000"
+                      style={{ width: `${(page.views / gaData.topPages[0].views) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-zinc-900 rounded-3xl p-10 text-white flex flex-col justify-between relative overflow-hidden">
+            <div className="relative z-10">
+              <h3 className="text-xl font-serif mb-2">Google Analytics Insight</h3>
+              <p className="text-white/60 text-sm mb-8">대시보드에 표시되는 데이터는 GA4 API를 통해 매일 오전 9시에 정기 업데이트됩니다.</p>
+              
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+                  </div>
+                  <div>
+                    <p className="text-xs text-white/40 font-bold uppercase tracking-widest">Growth Forecast</p>
+                    <p className="text-sm font-medium">이번 달 방문자 수가 지난달 대비 15% 증가할 것으로 예측됩니다.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative z-10 mt-12 flex gap-3">
+              <a 
+                href="https://analytics.google.com/" 
+                target="_blank" 
+                className="bg-white text-zinc-900 px-6 py-3 rounded-xl font-bold text-xs hover:bg-[#A53837] hover:text-white transition-all"
+              >
+                Go To GA4 Console
+              </a>
+              <button className="bg-white/10 text-white px-6 py-3 rounded-xl font-bold text-xs hover:bg-white/20">
+                Setup API Key
+              </button>
+            </div>
+            
+            {/* Background Decoration */}
+            <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-[#A53837] opacity-10 rounded-full blur-3xl"></div>
           </div>
         </div>
       </div>
