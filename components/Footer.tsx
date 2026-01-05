@@ -2,7 +2,11 @@
 import React from 'react';
 import { SITE_IMAGES } from '../constants/content';
 
-const Footer: React.FC = () => {
+interface FooterProps {
+  onNavigate?: (page: any) => void;
+}
+
+const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   return (
     <footer id="contact" className="bg-[#1a1a1a] text-white pt-20 pb-10">
       <div className="container mx-auto px-6">
@@ -73,6 +77,12 @@ const Footer: React.FC = () => {
         <div className="pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
           <p>© 2024 LOVE OPTICAL. ALL RIGHTS RESERVED.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
+            <button 
+              onClick={() => onNavigate?.('admin')}
+              className="hover:text-white transition-colors"
+            >
+              Admin
+            </button>
             <a href="#" className="hover:text-white">Privacy Policy</a>
             <a href="#" className="hover:text-white">Terms of Service</a>
             <a href="#" className="hover:text-white">Family Site</a>
