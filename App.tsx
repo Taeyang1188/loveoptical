@@ -34,7 +34,7 @@ const SubPageHero = ({ title, engTitle, bgImage }: { title: string, engTitle: st
 const HomePage = ({ onNavigate }: { onNavigate: (page: any) => void }) => (
   <div className="animate-in fade-in duration-700">
     <Hero onNavigate={onNavigate} />
-    <Stats />
+    <stats />
     <section className="bg-[#A53837] py-16">
       <div className="container mx-auto px-6 text-center">
         <h2 className="text-3xl md:text-4xl font-serif text-white mb-6">
@@ -51,6 +51,124 @@ const HomePage = ({ onNavigate }: { onNavigate: (page: any) => void }) => (
     <Location />
   </div>
 );
+
+// --- Admin Login & Dashboard ---
+
+const AdminView = () => {
+  const [userId, setUserId] = useState('');
+  const [password, setPassword] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (userId === 'admin' && password === '1230!!!') {
+      setIsAuthenticated(true);
+      setError('');
+    } else {
+      setError('Invalid credentials. Please try again.');
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-10 border border-gray-100">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900">Admin Login</h2>
+            <p className="text-gray-500 text-sm">Please sign in to access analytics</p>
+          </div>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">User ID</label>
+              <input 
+                type="text" 
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#A53837] focus:ring-0 transition-all outline-none"
+                placeholder="admin"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Password</label>
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#A53837] focus:ring-0 transition-all outline-none"
+                placeholder="••••••••"
+              />
+            </div>
+            {error && <p className="text-red-500 text-xs font-bold">{error}</p>}
+            <button 
+              type="submit"
+              className="w-full bg-[#A53837] text-white py-4 rounded-xl font-bold hover:brightness-95 transition-all shadow-lg"
+            >
+              Sign In
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white min-h-screen pb-24 animate-in fade-in duration-700 pt-32">
+      <div className="container mx-auto px-6">
+        <div className="flex justify-between items-center mb-12">
+          <div>
+            <h2 className="text-3xl font-serif text-gray-900">Dashboard</h2>
+            <p className="text-gray-500">Real-time site analytics & performance</p>
+          </div>
+          <button 
+            onClick={() => setIsAuthenticated(false)}
+            className="text-sm font-bold text-gray-400 hover:text-gray-900 underline underline-offset-4"
+          >
+            Sign Out
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Total Visitors Today</h4>
+            <p className="text-4xl font-serif text-gray-900">1,284</p>
+            <div className="mt-4 flex items-center text-green-500 text-sm font-bold">
+              <span>↑ 12% from yesterday</span>
+            </div>
+          </div>
+          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Average Session</h4>
+            <p className="text-4xl font-serif text-gray-900">4m 32s</p>
+            <div className="mt-4 flex items-center text-gray-400 text-sm">
+              <span>Stable performance</span>
+            </div>
+          </div>
+          <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Conversion Rate</h4>
+            <p className="text-4xl font-serif text-gray-900">3.8%</p>
+            <div className="mt-4 flex items-center text-green-500 text-sm font-bold">
+              <span>↑ 0.5% this week</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gray-50 rounded-3xl p-10 border border-gray-100 text-center">
+          <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2" />
+          </svg>
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Google Analytics Integration</h3>
+          <p className="text-gray-500 max-w-lg mx-auto mb-6 italic">
+            "Google Analytics tracking is active. Real-time events are being pushed to the GA4 console."
+          </p>
+          <div className="flex justify-center gap-4">
+            <button className="bg-zinc-900 text-white px-8 py-3 rounded-xl font-bold text-sm">Open GA4 Console</button>
+            <button className="bg-white border border-gray-200 text-gray-900 px-8 py-3 rounded-xl font-bold text-sm">Download Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // --- About Page ---
 
@@ -320,7 +438,7 @@ const ContactPage = () => (
 // --- Main App Component ---
 
 const App = () => {
-  type PageType = 'home' | 'service' | 'about' | 'contact' | 'eyewear' | 'lens' | 'contact-info' | 'eyewear-detail';
+  type PageType = 'home' | 'service' | 'about' | 'contact' | 'eyewear' | 'lens' | 'contact-info' | 'eyewear-detail' | 'admin';
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
@@ -376,6 +494,7 @@ const App = () => {
       eyewear: '컬렉션 | 프리미엄 하우스 브랜드 안경',
       lens: '콘택트 렌즈 | 아큐브, 바슈롬 정품 취급점',
       contact: '오시는 길 | 명동 지하상가 바-4호 러브안경',
+      admin: 'Admin Dashboard | 러브안경',
       'eyewear-detail': `${selectedProduct?.brand || '안경'} - ${selectedProduct?.name || '상세보기'} | 러브안경`
     };
 
@@ -385,7 +504,8 @@ const App = () => {
       service: 'Essilor 최첨단 검안기와 50년 숙련된 노하우로 최상의 시력을 제공합니다.',
       eyewear: '블랙몬스터, 펠리즈 등 다양한 하우스 브랜드 안경 및 선글라스 컬렉션.',
       lens: '다양한 글로벌 브랜드 콘택트 렌즈와 전용 솔루션 전문 상담.',
-      contact: '명동 롯데백화점 인근, 명동 지하상가 바-4호 위치 및 상담 안내.'
+      contact: '명동 롯데백화점 인근, 명동 지하상가 바-4호 위치 및 상담 안내.',
+      admin: 'Love Optical internal analytics dashboard.'
     };
 
     document.title = titles[currentPage] || titles.home;
@@ -400,7 +520,7 @@ const App = () => {
     const fullHash = window.location.hash.replace('#', '');
     const hash = fullHash.split('?')[0] as PageType;
 
-    if (['home', 'service', 'about', 'contact', 'eyewear', 'lens'].includes(hash)) {
+    if (['home', 'service', 'about', 'contact', 'eyewear', 'lens', 'admin'].includes(hash)) {
       setCurrentPage(hash);
     } else if (!hash) {
       setCurrentPage('home');
@@ -443,6 +563,7 @@ const App = () => {
       case 'lens': return <div className="animate-in fade-in duration-700"><SubPageHero title="콘택트 렌즈" engTitle="CONTACT LENSES" bgImage={SITE_IMAGES.cards.lens} /><div className="container mx-auto px-6 py-20 text-center"><h3 className="text-3xl font-serif italic mb-8">Professional Contact Lens Care</h3><p className="text-gray-500">아큐브, 바슈롬 등 글로벌 브랜드 렌즈를 만나보세요.</p></div></div>;
       case 'service': return <div className="pt-20"><Services onSelectCategory={handleNavigate} /></div>;
       case 'about': return <AboutPage />;
+      case 'admin': return <AdminView />;
       case 'contact':
       case 'contact-info': return <ContactPage />;
       default: return <HomePage onNavigate={handleNavigate} />;
@@ -453,7 +574,7 @@ const App = () => {
     <div className="min-h-screen bg-white font-sans text-gray-900">
       <Navbar onNavigate={handleNavigate} currentPage={currentPage} />
       <main>{renderContent()}</main>
-      <Footer />
+      <Footer onNavigate={handleNavigate} />
       <ContactFAB />
     </div>
   );
