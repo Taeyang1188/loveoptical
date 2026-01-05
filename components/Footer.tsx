@@ -24,7 +24,7 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 />
               </div>
               <div className="flex flex-col -space-y-1">
-                <span className="text-xl font-bold tracking-tighter">
+                <span className="text-xl font-bold tracking-tighter transition-colors">
                   LOVE OPTICAL
                 </span>
                 <span className="text-[10px] font-medium tracking-widest text-[#A53837]">러브안경 SINCE 1977</span>
@@ -76,10 +76,11 @@ const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
         <div className="pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
           <p>© 2024 LOVE OPTICAL. ALL RIGHTS RESERVED.</p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
+          <div className="flex space-x-6 mt-4 md:mt-0 items-center">
+            {/* Admin 버튼을 Privacy Policy 왼쪽에 배치 */}
             <button 
               onClick={() => onNavigate?.('admin')}
-              className="hover:text-white transition-colors"
+              className="hover:text-white transition-colors bg-white/5 px-2 py-1 rounded"
             >
               Admin
             </button>
