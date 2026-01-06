@@ -14,6 +14,9 @@ const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
           src='https://my.spline.design/sunglassesspin-C7g8OFiwFUOzVe9u2C1BLjKK/' 
           frameBorder='0' 
           width='100%' 
+          title="Sunglasses 3D View"
+          /* @ts-ignore: fetchpriority is a valid experimental attribute for performance */
+          fetchpriority="high"
           style={{
             height: 'calc(100% + 100px)',
             width: '100%',

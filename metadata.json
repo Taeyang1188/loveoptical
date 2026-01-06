@@ -1,7 +1,14 @@
 {
   "name": "Love Optical (러브안경) - 50 Years of Excellence",
-  "description": "Premium optical service in the heart of Myeongdong, Seoul. Specializing in expert eye examinations, frame adjustments, and quick lens replacement since 1977.",
+  "description": "Premium optical service in Myeongdong since 1977. Expert eye exams, luxury eyewear, and specialized lens care. Located at Myeongdong Underground Shopping Center Ba-4.",
   "requestFramePermissions": [
     "geolocation"
+  ],
+  "keywords": [
+    "Myeongdong Optical",
+    "Expert Eye Exam Seoul",
+    "Love Optical",
+    "Premium Eyewear Korea",
+    "Myeongdong Glasses"
   ]
 }
