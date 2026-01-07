@@ -2,18 +2,18 @@
 <rss version="2.0">
 <channel>
   <title>러브안경 (Love Optical)</title>
-  <link>https://loveoptical.co.kr</link>
+  <link>https://loveoptical.netlify.app/</link>
   <description>명동 50년 전통의 정밀 검안 안경원, 러브안경의 최신 컬렉션과 소식</description>
   <language>ko-kr</language>
   <item>
     <title>러브안경 50주년 기념 하우스 브랜드 컬렉션</title>
-    <link>https://loveoptical.co.kr/#eyewear</link>
+    <link>https://loveoptical.netlify.app/#eyewear</link>
     <description>Black Monster, Feliz 등 장인의 숨결이 담긴 프리미엄 안경테를 만나보세요.</description>
     <pubDate>Mon, 01 Jan 2024 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>정밀 검안 및 개인별 맞춤 피팅 서비스</title>
-    <link>https://loveoptical.co.kr/#service</link>
+    <link>https://loveoptical.netlify.app/#service</link>
     <description>50년 숙련된 노하우와 최첨단 장비로 최상의 시력을 찾아드립니다.</description>
     <pubDate>Mon, 01 Jan 2024 00:00:00 GMT</pubDate>
   </item>

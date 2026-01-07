@@ -510,8 +510,8 @@ const App = () => {
       "@type": "OpticalBusiness",
       "name": "러브안경 (Love Optical)",
       "image": SITE_IMAGES.aboutInterior,
-      "@id": "https://loveoptical.co.kr",
-      "url": "https://loveoptical.co.kr",
+      "@id": "https://loveoptical.netlify.app/",
+      "url": "https://loveoptical.netlify.app/",
       "telephone": CONTACT_INFO.phone,
       "address": {
         "@type": "PostalAddress",
